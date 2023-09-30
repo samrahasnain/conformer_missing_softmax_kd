@@ -812,7 +812,7 @@ class RGBD_SOD(nn.Module):
         #print(final.shape)
         return final,rgb_enc,depth_enc
         
-def build_model(network='conformer', base_model_cfg='conformer'):
+def build_model_s(network='conformer', base_model_cfg='conformer'):
     backbone = Conformer(patch_size=16, channel_ratio=4, embed_dim=384, depth=12,
                       num_heads=6, mlp_ratio=4, qkv_bias=True) 
     return RGBD_SOD(RGBDInModule(backbone),RGBD_encoder())
