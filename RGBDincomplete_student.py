@@ -8,8 +8,8 @@ import os
 import cv2
 import numpy
 import numpy as np
-k_channels=[384,384,384,768,1536]
-d_channels=576
+k_channels=[256,256,256,512,1024]
+d_channels=384
 class Mlp(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):
         super().__init__()
@@ -724,21 +724,21 @@ class RGBD_SOD(nn.Module):
         self.RGBDInModule = RGBDInModule
         self.encoder = RGBD_encoder
         
-        self.msr1 = MSR(in_features=384, h_features=128, out_features=2)
-        self.msr2 = MSR(in_features=768, h_features=128,  out_features=2)
-        self.msr3 = MSR(in_features=576, h_features=128, out_features=2)
+        self.msr1 = MSR(in_features=256, h_features=128, out_features=2)
+        self.msr2 = MSR(in_features=512, h_features=128,  out_features=2)
+        self.msr3 = MSR(in_features=384, h_features=128, out_features=2)
         self.softmax = nn.Softmax(dim=1)
-        self.ca1 = ShuffleChannelAttention(channel=768,reduction=16,kernel_size=3,groups=4)
-        self.ca2 = ShuffleChannelAttention(channel=1536,reduction=32,kernel_size=3,groups=8)
+        self.ca1 = ShuffleChannelAttention(channel=512,reduction=16,kernel_size=3,groups=4)
+        self.ca2 = ShuffleChannelAttention(channel=1024,reduction=32,kernel_size=3,groups=8)
         
         self.sa = SpatialGroupEnhance(groups=4)
-        self.upf1 = nn.ConvTranspose2d(576,384,kernel_size=3, stride=4, padding=0, output_padding=1, dilation=1)
-        self.upf2 = nn.ConvTranspose2d(576,384,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)
-        self.upf3 = nn.Conv2d(576,768,1,1)
+        self.upf1 = nn.ConvTranspose2d(384,256,kernel_size=3, stride=4, padding=0, output_padding=1, dilation=1)
+        self.upf2 = nn.ConvTranspose2d(384,256,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)
+        self.upf3 = nn.Conv2d(384,512,1,1)
         self.last_conv = nn.Conv2d(64,1, 1, 1)
-        self.f_up3 = nn.ConvTranspose2d(1536,768,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)
-        self.f_up2 = nn.ConvTranspose2d(768,768,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)
-        self.f_up1 = nn.ConvTranspose2d(768,64,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)       
+        self.f_up3 = nn.ConvTranspose2d(1024,512,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)
+        self.f_up2 = nn.ConvTranspose2d(512,512,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)
+        self.f_up1 = nn.ConvTranspose2d(512,64,kernel_size=3, stride=2, padding=1, output_padding=1, dilation=1)       
 
     def forward(self, rgb,depth):
         feat_rgb,feat_depth_r  = self.RGBDInModule(rgb,depth)
@@ -813,6 +813,6 @@ class RGBD_SOD(nn.Module):
         return final,rgb_enc,depth_enc
         
 def build_model(network='conformer', base_model_cfg='conformer'):
-    backbone = Conformer(patch_size=16, channel_ratio=6, embed_dim=576, depth=12,
-                      num_heads=9, mlp_ratio=4, qkv_bias=True) 
+    backbone = Conformer(patch_size=16, channel_ratio=4, embed_dim=384, depth=12,
+                      num_heads=6, mlp_ratio=4, qkv_bias=True) 
     return RGBD_SOD(RGBDInModule(backbone),RGBD_encoder())
