@@ -29,8 +29,8 @@ def build_feature_connector(t_channel, s_channel):
 class build_model_kd(nn.Module):
     def __init__(self, t_net, s_net):
         super(build_model_kd, self).__init__()
-        t_channels=1
-        s_channels=1
+        t=1
+        s=1
         self.Connectors = build_feature_connector(t, s) 
         self.t_net = t_net
         self.s_net = s_net
