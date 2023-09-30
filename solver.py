@@ -35,7 +35,7 @@ class Solver(object):
         self.show_every = config.show_every
         #self.build_model()
         self.net_t = build_model(self.config.network, self.config.arch)
-        self.net_s = build_model(self.config.network, self.config.arch)
+        self.net_s = build_model_s(self.config.network, self.config.arch)
         self.net_kd=build_model_kd(self.net_t, self.net_s)
         #self.net.eval()
         print('Loading pre-trained teacher model for kd from %s...' % self.config.model_t)
