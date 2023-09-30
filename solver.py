@@ -63,8 +63,8 @@ class Solver(object):
         self.wd = self.config.wd
 
         self.optimizer = torch.optim.Adam([{'params': self.net_s.parameters()}, {'params': self.net_kd.Connectors.parameters()}], lr=self.lr, weight_decay=self.wd)
-        print('the number of teacher model parameters: {}'.format(sum([p.data.nelement() for p in net_t.parameters()])))
-        print('the number of student model parameters: {}'.format(sum([p.data.nelement() for p in net_s.parameters()])))
+        print('the number of teacher model parameters: {}'.format(sum([p.data.nelement() for p in self.net_t.parameters()])))
+        print('the number of student model parameters: {}'.format(sum([p.data.nelement() for p in self.net_s.parameters()])))
         self.print_network(self.net, 'Incomplete modality RGBD SOD Structure')
 
     def print_network(self, model, name):
