@@ -115,7 +115,7 @@ class Solver(object):
                     images = images.to(device)
                     depth = depth.to(device)
 
-                preds,rgb_enc,depth_enc = self.net_kd(images,depth)
+                preds,rgb_enc,depth_enc,loss_dis = self.net_kd(images,depth)
                 #preds = F.interpolate(preds, tuple(im_size), mode='bilinear', align_corners=True)
                 pred = np.squeeze(torch.sigmoid(preds)).cpu().data.numpy()
 
